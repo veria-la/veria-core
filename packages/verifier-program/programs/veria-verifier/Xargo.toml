@@ -1,0 +1,12 @@
+# Xargo configuration for the Solana BPF / SBF target.
+#
+# Anchor's build script reads this file when emitting the on-chain artefact.
+# The defaults below mirror what `anchor init` writes for a new program and
+# are pinned here so the workspace can build deterministically across
+# different toolchain installs.
+
+[target.bpfel-unknown-unknown.dependencies.std]
+features = []
+
+[target.sbf-solana-solana.dependencies.std]
+features = []

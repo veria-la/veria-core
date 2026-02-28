@@ -1,0 +1,52 @@
+# VERIA Verifier — Cargo workspace.
+#
+# This workspace is intentionally separate from the root `veria/Cargo.toml`
+# (which is excluded via the top-level `exclude` list).  Anchor programs need
+# their own workspace because:
+#
+#   * the BPF / SBF target requires a much narrower dependency tree (no
+#     `tokio`, no `reqwest`, etc.);
+#   * `anchor build` runs `cargo build-sbf --workspace`, which would otherwise
+#     try to cross-compile every host crate;
+#   * the workspace `resolver = "2"` and feature unification rules differ
+#     between the on-chain build and the host CLI build.
+
+[workspace]
+resolver = "2"
+members = [
+    "programs/*",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+authors = ["VERIA contributors"]
+repository = "https://github.com/veria-labs/veria-core"
+homepage = "https://veria.fun"
+
+[workspace.dependencies]
+anchor-lang = { version = "0.31.1", features = ["init-if-needed"] }
+
+# SP1 on-chain verifier.  Optional because the crate publishes a Groth16
+# verifier that pulls in BN254 pairing routines; we gate it behind the
+# `sp1-verify` cargo feature so the program still compiles on environments
+# where `sp1-solana` is not installed (e.g. fast iteration on the data model).
+sp1-solana = { version = "0.1.0", default-features = false }
+
+# Lightweight crypto used by `utils::hash` for the proof-hash PDA seed.
+solana-program = "1.18.18"
+
+[profile.release]
+overflow-checks = true
+lto = "fat"
+codegen-units = 1
+
+[profile.release.build-override]
+opt-level = 3
+incremental = false
+codegen-units = 1
+
+[profile.dev]
+opt-level = 1
+overflow-checks = true

@@ -1,0 +1,54 @@
+# VERIA on-chain verifier (Anchor 0.31).
+#
+# The program lives at its own crate root so `anchor build` can produce a
+# single `.so` per program.  The on-chain code:
+#
+#   1. ingests an SP1 Groth16 proof (raw bytes + serialized public inputs);
+#   2. derives a deterministic `ProofRecord` PDA from
+#      `sha256(proof_bytes || public_inputs)` (see `src/utils/hash.rs`);
+#   3. calls `sp1_solana::verify_proof` to discharge the verification —
+#      this is the SP1 Solana groth16 verifier published by Succinct Labs;
+#   4. writes the verified `ProofRecord` to the PDA and bumps the
+#      `VerifierConfig.total_verified` counter.
+#
+# References:
+#   * SP1: Succinct Labs, "SP1: A Performant, 100% Open-Source, Contributor-
+#     Friendly zkVM" (2024).  https://github.com/succinctlabs/sp1
+#   * Nova folding: Kothapalli, Setty, Tzialla, CRYPTO 2022.
+#   * Solana Sealevel: parallel runtime over independent account write locks.
+
+[package]
+name = "veria-verifier"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "VERIA SP1 Groth16 verifier program for Solana (devnet live today, mainnet queued)."
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "veria_verifier"
+
+[features]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+cpi = ["no-entrypoint"]
+default = []
+
+# Enables the real SP1 Groth16 verification via `sp1-solana`.  Build with
+# `cargo build-sbf --features sp1-verify` for the production artefact, and
+# without the feature for fast iteration on the data model (verification is
+# replaced by a deterministic stub that still enforces `vk_hash` equality).
+sp1-verify = ["dep:sp1-solana"]
+
+idl-build = ["anchor-lang/idl-build"]
+
+[dependencies]
+anchor-lang = { workspace = true }
+solana-program = { workspace = true }
+
+# Optional — see the `sp1-verify` feature above.
+sp1-solana = { workspace = true, optional = true }

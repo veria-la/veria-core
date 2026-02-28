@@ -1,0 +1,60 @@
+# VERIA Verifier — Anchor 0.31 configuration.
+#
+# The verifier is a Solana mainnet program; both `[programs.mainnet]` and the
+# default `[provider]` point at mainnet on purpose.  Devnet deploys are
+# possible by passing `--provider.cluster devnet` explicitly on the command
+# line, but every script and migration script in this directory assumes the
+# mainnet wiring unless the operator overrides it.
+#
+# The `program_id` value below is a placeholder that Anchor accepts as a valid
+# base58 public key.  After running `anchor keys list` for the first time the
+# deployer replaces it with the real, on-chain id.  The same key needs to be
+# echoed inside `programs/veria-verifier/src/lib.rs` via `declare_id!`.
+
+[features]
+seeds = false
+skip-lint = false
+resolution = true
+
+[programs.localnet]
+veria_verifier = "FVJLyv7HwrVSBNqVnWQccpVb9MnU1w9iZZS6Hitmyfue"
+
+[programs.devnet]
+veria_verifier = "FVJLyv7HwrVSBNqVnWQccpVb9MnU1w9iZZS6Hitmyfue"
+
+[programs.mainnet]
+veria_verifier = "FVJLyv7HwrVSBNqVnWQccpVb9MnU1w9iZZS6Hitmyfue"
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "devnet"
+wallet = "~/.config/solana/id.json"
+
+# Mainnet RPC URL is supplied via the MAINNET_RPC_URL env var. Anchor reads
+# `provider.cluster = "mainnet"` and forwards to `solana program deploy`,
+# which in turn uses whatever URL `solana config get` resolves to.  To pin a
+# specific RPC for deploys without touching the global Solana config:
+#
+#   anchor deploy --provider.cluster mainnet \
+#                 --provider.wallet ~/.config/solana/id.json \
+#                 -- --url $MAINNET_RPC_URL
+#
+# (The `--` separator hands the trailing flags to `solana program deploy`.)
+
+[scripts]
+test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
+
+[test]
+startup_wait = 5000
+shutdown_wait = 2000
+upgradeable = false
+
+[test.validator]
+url = "https://api.mainnet-beta.solana.com"
+
+# Clone the SP1 verifier dependencies onto the local validator when running
+# `anchor test --skip-deploy --provider.cluster localnet`. Empty in the
+# template; populate with `[[test.validator.clone]]` blocks once the on-chain
+# helper accounts (e.g. SP1 Groth16 verification key) are known.

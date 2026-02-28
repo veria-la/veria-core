@@ -1,0 +1,74 @@
+# VERIA zkVM Host
+#
+# Off-chain proof generation service. Wraps the SP1 SDK (Succinct Labs, 2024)
+# and a Nova-style folding adapter (Kothapalli, Setty, Tzialla, CRYPTO 2022).
+# Non-uniform circuit batches are handled via SuperNova augmented circuits
+# (Kothapalli, Setty, ePrint 2022/1758).
+
+[package]
+name = "veria-zkvm-host"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "VERIA SP1 host: generates and folds zkVM proofs for the Solana mainnet verifier."
+
+[[bin]]
+name = "veria-host"
+path = "src/main.rs"
+
+[lib]
+name = "veria_zkvm_host"
+path = "src/lib.rs"
+
+[features]
+# Pull in the heavy SP1 SDK (which transitively depends on tokio + openssl).
+# Off by default so plain `cargo check` / `cargo build` works on minimal
+# hosts; CI enables this feature alongside `VERIA_BUILD_ELFS=1` to embed real
+# guest ELFs and call into the real prover.
+default = []
+sp1-runtime = ["dep:sp1-sdk"]
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+clap.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+
+# SP1 SDK is feature-gated — see the `sp1-runtime` feature above.
+sp1-sdk = { workspace = true, optional = true }
+
+# HTTP bridge (FastAPI -> host)
+axum = { version = "0.7", features = ["json"] }
+tower = "0.5"
+tower-http = { version = "0.5", features = ["cors", "trace"] }
+hyper = "1.4"
+
+# Hashing for fingerprint commitments used by the folding adapter.
+sha2 = "0.10"
+hex = "0.4"
+
+# Serde does not derive Serialize/Deserialize for arbitrary-length arrays.
+# `serde-big-array` handles arrays larger than 32 elements which we need for
+# the median/sort/ml-inference inputs.
+serde-big-array = "0.5"
+
+# Vector ops used by the folding accumulator stand-in (scalar field elements
+# are modeled as u64 for the deterministic test path).
+rand = "0.8"
+
+# NOTE: `sp1-build` is intentionally NOT declared as a build-dependency here.
+# `cargo` build-dependencies cannot be feature-gated, and pulling
+# `sp1-build` unconditionally would force the openssl-sys transitive
+# dependency on hosts that only want a `cargo check`. Instead, when
+# `VERIA_BUILD_ELFS=1`, the build script invokes `cargo prove build`
+# directly via `std::process::Command` (see `build.rs`).
+
+[dev-dependencies]
+tempfile = "3.10"

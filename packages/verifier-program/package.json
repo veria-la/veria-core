@@ -1,0 +1,32 @@
+{
+  "name": "@veria/verifier-program",
+  "version": "0.1.0",
+  "private": true,
+  "description": "VERIA SP1 Groth16 verifier — Solana Anchor program (devnet live today, mainnet queued). IDL + TypeScript test harness.",
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "anchor build",
+    "build:prod": "anchor build -- --features sp1-verify",
+    "test": "anchor test",
+    "test:skip-deploy": "anchor test --skip-deploy",
+    "deploy:mainnet": "anchor deploy --provider.cluster mainnet --provider.wallet ~/.config/solana/id.json",
+    "deploy:devnet": "anchor deploy --provider.cluster devnet --provider.wallet ~/.config/solana/id.json",
+    "idl:init:mainnet": "anchor idl init --provider.cluster mainnet -f target/idl/veria_verifier.json $(anchor keys list | awk '/veria_verifier/ {print $2}')",
+    "lint": "echo 'no lint configured'"
+  },
+  "dependencies": {
+    "@coral-xyz/anchor": "^0.31.1",
+    "@solana/web3.js": "^1.95.0"
+  },
+  "devDependencies": {
+    "@types/bn.js": "^5.1.6",
+    "@types/chai": "^4.3.16",
+    "@types/mocha": "^10.0.7",
+    "@types/node": "^22.0.0",
+    "chai": "^4.5.0",
+    "mocha": "^10.7.0",
+    "prettier": "^3.3.3",
+    "ts-mocha": "^10.0.0",
+    "typescript": "^5.5.3"
+  }
+}

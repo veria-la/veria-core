@@ -1,0 +1,23 @@
+[package]
+name = "veria-circuit-scoring-program"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+# Guest binary. Compiled to RISC-V by `cargo prove build`.
+# `test = false` keeps `cargo test --workspace` from running the binary as a
+# unit-test harness — the guest's `main` is installed by SP1's `entrypoint!`
+# macro and is not a `#[test]`-compatible entry point.
+[[bin]]
+name = "veria-circuit-scoring-program"
+path = "src/main.rs"
+test = false
+
+[dependencies]
+# SP1 guest runtime (Succinct Labs).
+sp1-zkvm.workspace = true
+serde.workspace = true
+# Required for arrays of length > 32 (the scoring vectors are 64 wide).
+serde-big-array = "0.5"
+# `release` profile is inherited from the workspace root Cargo.toml.

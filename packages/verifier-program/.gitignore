@@ -1,0 +1,24 @@
+.anchor
+.DS_Store
+target/debug
+target/release
+target/sbf-solana-solana
+target/bpfel-unknown-unknown
+target/.rustc_info.json
+target/**/*.d
+target/**/*.rlib
+target/**/incremental/
+target/deploy/*-keypair.json
+target/deploy/*.so
+
+node_modules
+test-ledger
+yarn-error.log
+
+# Built IDLs are regenerated, but production releases commit them.
+# Re-allow the JSON artefact when shipping a release tag.
+target/idl/*.json
+target/types/
+
+# Anchor's `anchor verify` cache.
+.anchor/

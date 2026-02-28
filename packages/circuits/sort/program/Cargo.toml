@@ -1,0 +1,18 @@
+[package]
+name = "veria-circuit-sort-program"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+
+[[bin]]
+name = "veria-circuit-sort-program"
+path = "src/main.rs"
+test = false
+
+[dependencies]
+sp1-zkvm.workspace = true
+serde.workspace = true
+# Required for the 256-wide input / sorted / perm arrays.
+serde-big-array = "0.5"
+# `release` profile is inherited from the workspace root.
