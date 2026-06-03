@@ -1,0 +1,32 @@
+# ml-gated-mint Anchor program.
+#
+# CPI consumer of the VERIA verifier: `mint_if_verified` verifies a Nova-folded
+# `ml-inference` proof and only mints when the proven classifier output's
+# argmax matches the gate's target class. The verifier is pulled with
+# `features = ["cpi"]`.
+
+[package]
+name = "ml-gated-mint"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "NFT mint conditioned on a verified MLP classification, gated via the VERIA verifier CPI."
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "ml_gated_mint"
+
+[features]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+cpi = ["no-entrypoint"]
+default = []
+idl-build = ["anchor-lang/idl-build", "veria-verifier/idl-build"]
+
+[dependencies]
+anchor-lang = { version = "0.31.1", features = ["init-if-needed"] }
+veria-verifier = { git = "https://github.com/veria-la/veria-core", branch = "main", features = ["cpi"] }

@@ -1,0 +1,32 @@
+# gated-leaderboard Anchor program.
+#
+# CPI consumer of the VERIA verifier: `submit_ranking` verifies a Nova-folded
+# `sort` proof (which carries a permutation witness) before committing a
+# top-N ranking, so no one can splice their score into the board. The verifier
+# is pulled with `features = ["cpi"]`.
+
+[package]
+name = "gated-leaderboard"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "Anti-cheat leaderboard gated by a Nova-folded sort/permutation proof verified via the VERIA verifier CPI."
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "gated_leaderboard"
+
+[features]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+cpi = ["no-entrypoint"]
+default = []
+idl-build = ["anchor-lang/idl-build", "veria-verifier/idl-build"]
+
+[dependencies]
+anchor-lang = { version = "0.31.1", features = ["init-if-needed"] }
+veria-verifier = { git = "https://github.com/veria-la/veria-core", branch = "main", features = ["cpi"] }

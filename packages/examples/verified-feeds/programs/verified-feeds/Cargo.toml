@@ -1,0 +1,37 @@
+# verified-feeds Anchor program.
+#
+# CPI consumer of the VERIA verifier: `publish_feed` verifies a Nova-folded
+# median proof through `veria_verifier::cpi::verify_proof` and, only if the
+# verifier accepts, writes the price into a `PriceFeed` PDA. The verifier is
+# pulled in with `features = ["cpi"]` so the generated `cpi` module is
+# available and the on-chain entrypoint is stripped (`no-entrypoint`).
+
+[package]
+name = "verified-feeds"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "Pyth-style oracle backed by Nova-folded median proofs verified on-chain via the VERIA verifier CPI."
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "verified_feeds"
+
+[features]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+cpi = ["no-entrypoint"]
+default = []
+idl-build = ["anchor-lang/idl-build", "veria-verifier/idl-build"]
+
+[dependencies]
+anchor-lang = { version = "0.31.1", features = ["init-if-needed"] }
+
+# The on-chain verifier, consumed as a CPI dependency. Pinned to the public
+# veria-core repository so this example is fork-and-build complete: clone it,
+# `anchor build`, and the verifier crate resolves straight from git.
+veria-verifier = { git = "https://github.com/veria-la/veria-core", branch = "main", features = ["cpi"] }

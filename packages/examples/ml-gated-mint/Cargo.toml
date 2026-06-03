@@ -1,0 +1,26 @@
+# ml-gated-mint — example dApp workspace.
+#
+# Standalone Anchor workspace (not a member of the root veria-core workspace)
+# so it resolves `veria-verifier` from git and can be forked/built in
+# isolation. Mirrors `packages/verifier-program`.
+
+[workspace]
+resolver = "2"
+members = ["programs/*"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+authors = ["VERIA contributors"]
+repository = "https://github.com/veria-la/veria-core"
+homepage = "https://veria.fun"
+
+[profile.release]
+overflow-checks = true
+lto = "fat"
+codegen-units = 1
+
+[profile.dev]
+opt-level = 1
+overflow-checks = true

@@ -1,0 +1,26 @@
+# gated-leaderboard — Anchor 0.31 configuration (standalone example).
+#
+# The program id below matches `declare_id!` in
+# `programs/gated-leaderboard/src/lib.rs`. Replace both with the output of
+# `anchor keys list` before any real deploy.
+
+[features]
+seeds = false
+skip-lint = false
+resolution = true
+
+[programs.localnet]
+gated_leaderboard = "8gvp9JHFrspxppEB3usTARr5NVsKdE76b9mzt7eyqkav"
+
+[programs.mainnet]
+gated_leaderboard = "8gvp9JHFrspxppEB3usTARr5NVsKdE76b9mzt7eyqkav"
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "mainnet"
+wallet = "~/.config/solana/id.json"
+
+[scripts]
+test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
